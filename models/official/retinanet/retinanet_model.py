@@ -662,6 +662,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
       for level in range(params['min_level'], params['max_level'] + 1):
         cls_outputs[level] = kwargs['cls_outputs_%d' % level]
         box_outputs[level] = kwargs['box_outputs_%d' % level]
+        print("cls_outputs[level]", cls_outputs[level],"box_outputs[level]", box_outputs[level], "level", level )
       detections = anchor_labeler.generate_detections(
           cls_outputs, box_outputs, kwargs['source_ids'])
       eval_metric = coco_metric.EvaluationMetric(params['val_json_file'])
