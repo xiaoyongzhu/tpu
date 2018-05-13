@@ -157,7 +157,7 @@ def _generate_anchor_boxes(image_size, anchor_scale, anchor_configs):
     for config in configs:
       stride, octave_scale, aspect = config
       if image_size % stride != 0:
-        raise ValueError("input size must be divided by the stride.")
+        raise ValueError("input size must be divided by the stride.", "image size", image_size, "stride", stride)
       base_anchor_size = anchor_scale * stride * 2**octave_scale
       anchor_size_x_2 = base_anchor_size * aspect[0] / 2.0
       anchor_size_y_2 = base_anchor_size * aspect[1] / 2.0
