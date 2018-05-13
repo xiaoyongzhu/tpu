@@ -690,12 +690,13 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
       metric_fn_inputs['box_outputs_%d' % level] = box_outputs[level]
     eval_metrics = (metric_fn, metric_fn_inputs)
 
-  return ModifiedTPUEstimatorSpec(
+  temp = ModifiedTPUEstimatorSpec(
       mode=mode,
       loss=total_loss,
       train_op=train_op,
       eval_metrics=eval_metrics,
       scaffold_fn=scaffold_fn)
+  return temp.as_estimator_spec()
 
   # return ModifiedTPUEstimatorSpec(
   #     mode=mode,
