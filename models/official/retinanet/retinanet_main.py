@@ -30,7 +30,7 @@ import retinanet_model
 # from tensorflow.contrib.tpu.python.tpu import tpu_estimator
 from tensorflow.contrib.training.python.training import evaluation
 
-tf.enable_eager_execution()
+# tf.enable_eager_execution()
 
 # Cloud TPU Cluster Resolvers
 flags.DEFINE_string(
