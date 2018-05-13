@@ -198,10 +198,13 @@ def _generate_detections(cls_outputs, box_outputs, anchor_boxes, image_id):
     detections: detection results in a tensor with each row representing
       [image_id, x, y, width, height, score, class]
   """
+  print("shape of cls_outputs is ", cls_outputs.shape)
   num_classes = cls_outputs.shape[1]
   cls_outputs_reshape = cls_outputs.reshape(-1)
+
   # speed up inference by filtering out low scoring logits
   indices = np.where(cls_outputs_reshape > MIN_CLASS_SCORE)[0]
+  print("shape of cls_outputs_reshape is ", cls_outputs_reshape.shape, "indices", indices)
   if indices.any():
     length = min(len(indices), MAX_DETECTION_POINTS)
     # use argpartition instead of argsort to speed up
