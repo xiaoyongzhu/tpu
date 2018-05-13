@@ -390,6 +390,7 @@ class AnchorLabeler(object):
       box_outputs_all.append(tf.reshape(box_outputs[level], [-1, 4]))
     cls_outputs_all = tf.concat(cls_outputs_all, 0)
     box_outputs_all = tf.concat(box_outputs_all, 0)
+    print("cls_outputs_all shape, self._anchors.boxe shape", len(cls_outputs_all), self._anchors.boxes.shape)
     return tf.py_func(
         _generate_detections,
         [cls_outputs_all, box_outputs_all, self._anchors.boxes, image_id],
