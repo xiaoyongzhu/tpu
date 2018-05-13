@@ -212,6 +212,7 @@ def _generate_detections(cls_outputs, box_outputs, anchor_boxes, image_id):
     indices_top_k = np.argsort(-cls_outputs_reshape)[0:MAX_DETECTION_POINTS]
 
   indices, classes = np.unravel_index(indices_top_k, cls_outputs.shape)
+  print("shape of anchor boxes is ", anchor_boxes.shape, "num_classes is", num_classes)
   anchor_boxes = anchor_boxes[indices, :]
   box_outputs = box_outputs[indices, :]
   scores = sigmoid(cls_outputs[indices, classes])
