@@ -127,6 +127,7 @@ def main(argv):
       resnet_checkpoint=FLAGS.resnet_checkpoint,
       val_json_file=FLAGS.val_json_file,
       mode=FLAGS.mode,
+      batch_size=FLAGS.train_batch_size,
   )
   config_proto = tf.ConfigProto(
       allow_soft_placement=True, log_device_placement=False)
