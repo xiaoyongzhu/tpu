@@ -26,8 +26,8 @@ import tensorflow as tf
 
 import dataloader
 import retinanet_model
-from tensorflow.contrib.tpu.python.tpu import tpu_config
-from tensorflow.contrib.tpu.python.tpu import tpu_estimator
+# from tensorflow.contrib.tpu.python.tpu import tpu_config
+# from tensorflow.contrib.tpu.python.tpu import tpu_estimator
 from tensorflow.contrib.training.python.training import evaluation
 
 
@@ -134,21 +134,27 @@ def main(argv):
     config_proto.graph_options.optimizer_options.global_jit_level = (
         tf.OptimizerOptions.ON_1)
 
-  run_config = tpu_config.RunConfig(
-      cluster=tpu_cluster_resolver,
-      evaluation_master=FLAGS.eval_master,
+  run_config = tf.estimator.RunConfig(
+      # cluster=tpu_cluster_resolver,
+      # evaluation_master=FLAGS.eval_master,
       model_dir=FLAGS.model_dir,
       log_step_count_steps=FLAGS.iterations_per_loop,
       session_config=config_proto,
-      tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,
-                                      FLAGS.num_shards))
+      # tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,
+      #                                 FLAGS.num_shards)
+  )
 
   # TPU Estimator
   if FLAGS.mode == 'train':
-    train_estimator = tpu_estimator.TPUEstimator(
+    # train_estimator = tpu_estimator.TPUEstimator(
+    #     model_fn=retinanet_model.retinanet_model_fn,
+    #     use_tpu=FLAGS.use_tpu,
+    #     train_batch_size=FLAGS.train_batch_size,
+    #     config=run_config,
+    #     params=params)
+    train_estimator = tf.estimator.Estimator(
         model_fn=retinanet_model.retinanet_model_fn,
-        use_tpu=FLAGS.use_tpu,
-        train_batch_size=FLAGS.train_batch_size,
+        # train_batch_size=FLAGS.train_batch_size,
         config=run_config,
         params=params)
     train_estimator.train(
@@ -168,13 +174,21 @@ def main(argv):
           is_training_bn=False,
           use_bfloat16=False,
       )
-      eval_estimator = tpu_estimator.TPUEstimator(
+      # eval_estimator = tpu_estimator.TPUEstimator(
+      #     model_fn=retinanet_model.retinanet_model_fn,
+      #     use_tpu=False,
+      #     train_batch_size=FLAGS.train_batch_size,
+      #     eval_batch_size=1,
+      #     config=run_config,
+      #     params=eval_params)
+
+      eval_estimator = tf.estimator.Estimator(
           model_fn=retinanet_model.retinanet_model_fn,
-          use_tpu=False,
-          train_batch_size=FLAGS.train_batch_size,
-          eval_batch_size=1,
+          # train_batch_size=FLAGS.train_batch_size,
+          # eval_batch_size=1,
           config=run_config,
           params=eval_params)
+
       eval_results = eval_estimator.evaluate(
           input_fn=dataloader.InputReader(FLAGS.validation_file_pattern,
                                           is_training=False),
@@ -195,14 +209,20 @@ def main(argv):
         is_training_bn=False,
         use_bfloat16=False,
     )
-
-    eval_estimator = tpu_estimator.TPUEstimator(
+    eval_estimator = tf.estimator.Estimator(
         model_fn=retinanet_model.retinanet_model_fn,
-        use_tpu=False,
-        eval_batch_size=1,
-        train_batch_size=FLAGS.train_batch_size,
+        # train_batch_size=FLAGS.train_batch_size,
+        # eval_batch_size=1,
         config=run_config,
         params=eval_params)
+    #
+    # eval_estimator = tpu_estimator.TPUEstimator(
+    #     model_fn=retinanet_model.retinanet_model_fn,
+    #     use_tpu=False,
+    #     eval_batch_size=1,
+    #     train_batch_size=FLAGS.train_batch_size,
+    #     config=run_config,
+    #     params=eval_params)
 
     def terminate_eval():
       tf.logging.info('Terminating eval after %d seconds of no checkpoints' %
