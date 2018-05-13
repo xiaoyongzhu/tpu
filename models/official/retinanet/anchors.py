@@ -363,6 +363,7 @@ class AnchorLabeler(object):
     gt_box_list = box_list.BoxList(gt_boxes)
     anchor_box_list = box_list.BoxList(self._anchors.boxes)
 
+
     # cls_weights, box_weights are not used
     cls_targets, _, box_targets, _, matches = self._target_assigner.assign(
         anchor_box_list, gt_box_list, gt_labels)
@@ -382,6 +383,7 @@ class AnchorLabeler(object):
   def generate_detections(self, cls_ouputs, box_outputs, image_id):
     cls_outputs_all = []
     box_outputs_all = []
+    print("self._anchors.min_level, self._anchors.max_level", self._anchors.min_level, self._anchors.max_level)
     for level in range(self._anchors.min_level, self._anchors.max_level + 1):
       cls_outputs_all.append(
           tf.reshape(cls_ouputs[level], [-1, self._num_classes]))
