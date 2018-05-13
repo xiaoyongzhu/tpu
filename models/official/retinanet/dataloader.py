@@ -65,7 +65,6 @@ class InputReader(object):
         data = example_decoder.decode(value)
 
         source_id = data['source_id']
-        print("source_id len is", len(source_id))
         image = data['image']
         boxes = data['groundtruth_boxes']
         classes = data['groundtruth_classes']
