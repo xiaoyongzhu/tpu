@@ -33,7 +33,6 @@ import coco_metric
 import retinanet_architecture
 from tensorflow.contrib.tpu.python.tpu import bfloat16
 from tensorflow.contrib.tpu.python.tpu import tpu_estimator
-from tensorflow.contrib.tpu.python.tpu import tpu_optimizer
 
 
 # A collection of Learning Rate schecules:
@@ -252,7 +251,9 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
     optimizer = tf.train.MomentumOptimizer(
         learning_rate, momentum=params['momentum'])
     if params['use_tpu']:
-      optimizer = tpu_optimizer.CrossShardOptimizer(optimizer)
+        # we don't use TPU so we will just stick with the default optimizer
+        optimizer = tf.train.MomentumOptimizer(
+            learning_rate, momentum=params['momentum'])
 
     # Batch norm requires update_ops to be added as a train_op dependency.
     update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
