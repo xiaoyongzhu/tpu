@@ -613,6 +613,8 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
       params['learning_rate'], params['lr_warmup_init'],
       params['lr_warmup_step'], params['lr_drop_step'], global_step)
   # cls_loss and box_loss are for logging. only total_loss is optimized.
+
+  print("cls_outputs is", cls_outputs, "box_outputs is", box_outputs)
   total_loss, cls_loss, box_loss = _detection_loss(cls_outputs, box_outputs,
                                                    labels, params)
 
