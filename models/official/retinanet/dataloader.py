@@ -64,7 +64,9 @@ class InputReader(object):
       with tf.name_scope('parser'):
         data = example_decoder.decode(value)
 
-        source_id = data['source_id']
+        # source_id = data['source_id']
+        # for xView dataset only; basically the original name is 122.tif and we will change it to number 122 later on.
+        source_id = data['source_id'][:-4]
         image = data['image']
         boxes = data['groundtruth_boxes']
         classes = data['groundtruth_classes']
@@ -100,7 +102,7 @@ class InputReader(object):
         # sess = tf.get_default_session()
         # print("source id is", sess.run(source_id))
 
-        # source_id = tf.string_to_number(source_id, out_type=tf.float32)
+        source_id = tf.string_to_number(source_id, out_type=tf.float32)
 
         # sess = tf.get_default_session()
         # print("after conversion, source id is", sess.run(source_id))
