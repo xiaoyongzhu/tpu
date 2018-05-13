@@ -97,13 +97,13 @@ class InputReader(object):
         (cls_targets, box_targets,
          num_positives) = anchor_labeler.label_anchors(boxes, classes)
 
-        with tf.Session() as sess:
-            print("source id is", sess.run(source_id))
+        sess = tf.get_default_session()
+        print("source id is", sess.run(source_id))
 
         source_id = tf.string_to_number(source_id, out_type=tf.float32)
 
-        with tf.Session() as sess:
-            print("after conversion, source id is", sess.run(source_id))
+        sess = tf.get_default_session()
+        print("after conversion, source id is", sess.run(source_id))
 
         if params['use_bfloat16']:
           image = tf.cast(image, dtype=tf.bfloat16)
