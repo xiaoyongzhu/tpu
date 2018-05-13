@@ -1,3 +1,26 @@
+# Running RetinaNet using "Object Detection" APIs and GPUs
+
+This repository is a fork of the TensorFlow TPU repository (https://github.com/tensorflow/tpu) and the goal is to reuse the RetinaNet model with TensorFlow Object Detection API. Please go directly to the [RetinaNet folder](models/official/retinanet) for more details on what I have modified. The most important change is to change TPU Estimator to TensorFlow regular estimator.
+
+
+Command:
+
+```
+python models/official/retinanet/retinanet_main.py   --train_batch_size=8  --training_file_pattern=/mnt/batch/tasks/shared/LS_root/mounts/bfs_train/xiaoyzhu/train-*  --resnet_checkpoint=/mnt/batch/tasks/shared/LS_root/mounts/bfs_train/resnet-nhwc-2018-02-07/  --model_dir=/home/ai4e/retinanet_train  --hparams=image_size=640  --num_examples_per_epoch=6400  --num_epochs=1
+```
+
+
+## Using pre-trained feature extractor (ResNet)
+I have also included the weights to initialize the backbone architecture (ResNet) since in the original repo, it is only available in Google Cloud Storage. This makes the repository a bit big.Please note that the folder must contain a `checkpoint` file and its content should point to the ResNet model file path. Otherwise the weights won't get loaded.
+
+## Download COCO dataset
+I have also updated the [COCO download script](../../../tools/datasets/download_and_preprocess_coco.sh) to use Protobuf 3.3.0 and a few other minor changes (to install COCO metrics in local user to avoid permission issues.). 
+
+## TODO
+Update the below doc to how to use this repository  
+
+
+# Original README
 # Training RetinaNet on Cloud TPU
 
 This folder contains an implementation of the
