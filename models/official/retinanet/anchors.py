@@ -383,9 +383,13 @@ class AnchorLabeler(object):
   def generate_detections(self, cls_ouputs, box_outputs, image_id):
     cls_outputs_all = []
     box_outputs_all = []
+    tmp_output_all = []
     print("self._anchors.min_level, self._anchors.max_level", self._anchors.min_level, self._anchors.max_level)
     for level in range(self._anchors.min_level, self._anchors.max_level + 1):
       print("level", level, "shape", cls_ouputs[level].shape)
+      tmp_output_all.append(
+        np.reshape(cls_ouputs[level], [-1, self._num_classes]))
+      print(tmp_output_all.shape)
       cls_outputs_all.append(
           tf.reshape(cls_ouputs[level], [-1, self._num_classes]))
       box_outputs_all.append(tf.reshape(box_outputs[level], [-1, 4]))
