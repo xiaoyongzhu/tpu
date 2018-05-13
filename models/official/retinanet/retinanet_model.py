@@ -641,6 +641,9 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
 
     def metric_fn(**kwargs):
       """Evaluation metric fn. Performed on CPU, do not reference TPU ops."""
+      
+      print("params['aspect_ratios'] is", params['aspect_ratios'])
+      print("params is", params)
       eval_anchors = anchors.Anchors(params['min_level'],
                                      params['max_level'],
                                      params['num_scales'],
