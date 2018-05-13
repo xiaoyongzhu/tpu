@@ -1,3 +1,12 @@
+# Running RetinaNet using "Object Detection" APIs and GPUs
+
+This repository is a fork of the TensorFlow TPU repository (https://github.com/tensorflow/tpu) and the goal is to reuse the RetinaNet model with TensorFlow Object Detection API. Please go directly to the [RetinaNet folder](models/official/retinanet) for more details on what I have modified.
+
+
+
+
+
+# Original README
 # Cloud TPUs #
 
 This repository is a collection of reference models and tools used with
