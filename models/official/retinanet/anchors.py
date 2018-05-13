@@ -177,6 +177,7 @@ def _generate_anchor_boxes(image_size, anchor_scale, anchor_configs):
     boxes_all.append(boxes_level.reshape([-1, 4]))
 
   anchor_boxes = np.vstack(boxes_all)
+  print("anchor_boxes output is", anchor_boxes.shape)
   return anchor_boxes
 
 
@@ -386,10 +387,7 @@ class AnchorLabeler(object):
     tmp_output_all = []
     print("self._anchors.min_level, self._anchors.max_level", self._anchors.min_level, self._anchors.max_level)
     for level in range(self._anchors.min_level, self._anchors.max_level + 1):
-      print("level", level, "shape", cls_ouputs[level].shape)
-      tmp_output_all.append(
-        np.reshape(cls_ouputs[level], [-1, self._num_classes]))
-      print(tmp_output_all.shape)
+      print("level", level, "cls_ouputs shape", cls_ouputs[level].shape, "box_outputs shape", box_outputs[level].shape)
       cls_outputs_all.append(
           tf.reshape(cls_ouputs[level], [-1, self._num_classes]))
       box_outputs_all.append(tf.reshape(box_outputs[level], [-1, 4]))
