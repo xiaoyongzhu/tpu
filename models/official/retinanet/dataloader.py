@@ -63,7 +63,9 @@ class InputReader(object):
       """Parse data to a fixed dimension input image and learning targets."""
       with tf.name_scope('parser'):
         data = example_decoder.decode(value)
+
         source_id = data['source_id']
+        print("source_id len is", len(source_id))
         image = data['image']
         boxes = data['groundtruth_boxes']
         classes = data['groundtruth_classes']
