@@ -245,6 +245,7 @@ def main(argv):
             input_fn=dataloader.InputReader(FLAGS.validation_file_pattern,
                                             is_training=False),
             steps=FLAGS.eval_steps)
+
         tf.logging.info('Eval results: %s' % eval_results)
 
         # Terminate eval job when final checkpoint is reached

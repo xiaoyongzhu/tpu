@@ -64,10 +64,10 @@ class InputReader(object):
       with tf.name_scope('parser'):
         data = example_decoder.decode(value)
 
-        # source_id = data['source_id']
+        source_id = data['source_id']
         # for xView dataset only; basically the original name is 122.tif and we will change it to number 122 later on.
-        len = tf.size(tf.string_split([data['source_id']],""))
-        source_id = tf.substr(data['source_id'],0,len - 4)
+        # len = tf.size(tf.string_split([data['source_id']],""))
+        # source_id = tf.substr(data['source_id'],0,len - 4)
 
         image = data['image']
         boxes = data['groundtruth_boxes']
