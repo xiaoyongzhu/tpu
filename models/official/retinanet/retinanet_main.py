@@ -27,7 +27,7 @@ import tensorflow as tf
 import dataloader
 import retinanet_model
 # from tensorflow.contrib.tpu.python.tpu import tpu_config
-# from tensorflow.contrib.tpu.python.tpu import tpu_estimator
+from tensorflow.contrib.tpu.python.tpu import tpu_estimator
 from tensorflow.contrib.training.python.training import evaluation
 
 # tf.enable_eager_execution()
@@ -137,7 +137,9 @@ def main(argv):
     config_proto.graph_options.optimizer_options.global_jit_level = (
         tf.OptimizerOptions.ON_1)
 
-  run_config = tf.estimator.RunConfig(
+  from tensorflow.python.estimator import run_config as run_config_lib
+  # update from tf.estimator.RunConfig
+  run_config = run_config_lib.RunConfig(
       # cluster=tpu_cluster_resolver,
       # evaluation_master=FLAGS.eval_master,
       model_dir=FLAGS.model_dir,
@@ -149,17 +151,17 @@ def main(argv):
 
   # TPU Estimator
   if FLAGS.mode == 'train':
-    # train_estimator = tpu_estimator.TPUEstimator(
-    #     model_fn=retinanet_model.retinanet_model_fn,
-    #     use_tpu=FLAGS.use_tpu,
-    #     train_batch_size=FLAGS.train_batch_size,
-    #     config=run_config,
-    #     params=params)
-    train_estimator = tf.estimator.Estimator(
+    train_estimator = tpu_estimator.TPUEstimator(
         model_fn=retinanet_model.retinanet_model_fn,
-        # train_batch_size=FLAGS.train_batch_size,
+        use_tpu=FLAGS.use_tpu,
+        train_batch_size=FLAGS.train_batch_size,
         config=run_config,
         params=params)
+    # train_estimator = tf.estimator.Estimator(
+    #     model_fn=retinanet_model.retinanet_model_fn,
+    #     # train_batch_size=FLAGS.train_batch_size,
+    #     config=run_config,
+    #     params=params)
     train_estimator.train(
         input_fn=dataloader.InputReader(FLAGS.training_file_pattern,
                                         is_training=True),
