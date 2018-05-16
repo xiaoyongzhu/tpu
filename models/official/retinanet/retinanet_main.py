@@ -222,20 +222,20 @@ def main(argv):
         is_training_bn=False,
         use_bfloat16=False,
     )
-    eval_estimator = tf.estimator.Estimator(
-        model_fn=retinanet_model.retinanet_model_fn,
-        # train_batch_size=FLAGS.train_batch_size,
-        # eval_batch_size=1,
-        config=run_config,
-        params=eval_params)
-    #
-    # eval_estimator = tpu_estimator.TPUEstimator(
+    # eval_estimator = tf.estimator.Estimator(
     #     model_fn=retinanet_model.retinanet_model_fn,
-    #     use_tpu=False,
-    #     eval_batch_size=1,
-    #     train_batch_size=FLAGS.train_batch_size,
+    #     # train_batch_size=FLAGS.train_batch_size,
+    #     # eval_batch_size=1,
     #     config=run_config,
     #     params=eval_params)
+    #
+    eval_estimator = tpu_estimator.TPUEstimator(
+        model_fn=retinanet_model.retinanet_model_fn,
+        use_tpu=False,
+        eval_batch_size=1,
+        train_batch_size=FLAGS.train_batch_size,
+        config=run_config,
+        params=eval_params)
 
     def terminate_eval():
       tf.logging.info('Terminating eval after %d seconds of no checkpoints' %
