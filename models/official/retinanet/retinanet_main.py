@@ -26,7 +26,7 @@ import tensorflow as tf
 
 import dataloader
 import retinanet_model
-# from tensorflow.contrib.tpu.python.tpu import tpu_config
+from tensorflow.contrib.tpu.python.tpu import tpu_config
 from tensorflow.contrib.tpu.python.tpu import tpu_estimator
 from tensorflow.contrib.training.python.training import evaluation
 
@@ -139,15 +139,23 @@ def main(argv):
 
   from tensorflow.python.estimator import run_config as run_config_lib
   # update from tf.estimator.RunConfig
-  run_config = run_config_lib.RunConfig(
-      # cluster=tpu_cluster_resolver,
-      # evaluation_master=FLAGS.eval_master,
+  run_config = tpu_config.RunConfig(
+      cluster=tpu_cluster_resolver,
+      evaluation_master=FLAGS.eval_master,
       model_dir=FLAGS.model_dir,
       log_step_count_steps=FLAGS.iterations_per_loop,
       session_config=config_proto,
-      # tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,
-      #                                 FLAGS.num_shards)
-  )
+      tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,
+                                      FLAGS.num_shards))
+  # run_config = run_config_lib.RunConfig(
+  #     # cluster=tpu_cluster_resolver,
+  #     # evaluation_master=FLAGS.eval_master,
+  #     model_dir=FLAGS.model_dir,
+  #     log_step_count_steps=FLAGS.iterations_per_loop,
+  #     session_config=config_proto,
+  #     # tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,
+  #     #                                 FLAGS.num_shards)
+  # )
 
   # TPU Estimator
   if FLAGS.mode == 'train':
