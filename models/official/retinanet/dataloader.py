@@ -154,6 +154,6 @@ class InputReader(object):
       labels['box_targets_%d' % level] = box_targets[level]
     labels['source_ids'] = source_ids
     labels['image_scales'] = image_scales
-    from tensorflow.python.data.ops import dataset_ops
-    return dataset_ops.Dataset.zip((images, labels))
-    # return images, labels
+    # from tensorflow.python.data.ops import dataset_ops
+    # return dataset_ops.Dataset.zip((images, labels))
+    return images, labels
