@@ -225,6 +225,18 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
     for level in levels:
       predictions['cls_outputs_%d' % level] = cls_outputs[level]
       predictions['box_outputs_%d' % level] = box_outputs[level]
+
+    eval_anchors = anchors.Anchors(params['min_level'],
+                                   params['max_level'],
+                                   params['num_scales'],
+                                   params['aspect_ratios'],
+                                   params['anchor_scale'],
+                                   params['image_size'])
+    anchor_labeler = anchors.AnchorLabeler(eval_anchors,
+                                           params['num_classes'])
+    detections = anchor_labeler.generate_detections(
+        cls_outputs, box_outputs,image_id=100)
+    print("detection for image is", detections)
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 
   # Load pretrained model from checkpoint.
