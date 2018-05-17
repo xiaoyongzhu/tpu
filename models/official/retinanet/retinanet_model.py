@@ -219,6 +219,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
 
   # First check if it is in PREDICT mode.
   if mode == tf.estimator.ModeKeys.PREDICT:
+    print("entering PREDICT mode")
     predictions = {
         'image': features,
     }

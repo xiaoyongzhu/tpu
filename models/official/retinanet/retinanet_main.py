@@ -266,7 +266,7 @@ def main(argv):
                                           is_training=False),
       checkpoint_path=FLAGS.model_dir)
 
-      print(eval_results)
+      print("eval result is", eval_results)
   else:
     tf.logging.info('Mode not found.')
 
