@@ -30,7 +30,6 @@ from tensorflow.contrib.tpu.python.tpu import tpu_config
 from tensorflow.contrib.tpu.python.tpu import tpu_estimator
 from tensorflow.contrib.training.python.training import evaluation
 
-# tf.enable_eager_execution()
 
 # Cloud TPU Cluster Resolvers
 flags.DEFINE_string(
@@ -100,13 +99,12 @@ def main(argv):
   del argv  # Unused.
 
   if FLAGS.use_tpu:
-    tpu_cluster_resolver = None
-    # tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
-    #     FLAGS.tpu,
-    #     zone=FLAGS.tpu_zone,
-    #     project=FLAGS.gcp_project)
-    # tpu_grpc_url = tpu_cluster_resolver.get_master()
-    # tf.Session.reset(tpu_grpc_url)
+    tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
+        FLAGS.tpu,
+        zone=FLAGS.tpu_zone,
+        project=FLAGS.gcp_project)
+    tpu_grpc_url = tpu_cluster_resolver.get_master()
+    tf.Session.reset(tpu_grpc_url)
   else:
     tpu_cluster_resolver = None
 
@@ -129,7 +127,6 @@ def main(argv):
       resnet_checkpoint=FLAGS.resnet_checkpoint,
       val_json_file=FLAGS.val_json_file,
       mode=FLAGS.mode,
-      # batch_size=FLAGS.train_batch_size,
   )
   config_proto = tf.ConfigProto(
       allow_soft_placement=True, log_device_placement=False)
@@ -137,8 +134,6 @@ def main(argv):
     config_proto.graph_options.optimizer_options.global_jit_level = (
         tf.OptimizerOptions.ON_1)
 
-  from tensorflow.python.estimator import run_config as run_config_lib
-  # update from tf.estimator.RunConfig
   run_config = tpu_config.RunConfig(
       cluster=tpu_cluster_resolver,
       evaluation_master=FLAGS.eval_master,
@@ -147,15 +142,6 @@ def main(argv):
       session_config=config_proto,
       tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,
                                       FLAGS.num_shards))
-  # run_config = run_config_lib.RunConfig(
-  #     # cluster=tpu_cluster_resolver,
-  #     # evaluation_master=FLAGS.eval_master,
-  #     model_dir=FLAGS.model_dir,
-  #     log_step_count_steps=FLAGS.iterations_per_loop,
-  #     session_config=config_proto,
-  #     # tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,
-  #     #                                 FLAGS.num_shards)
-  # )
 
   # TPU Estimator
   if FLAGS.mode == 'train':
@@ -165,11 +151,6 @@ def main(argv):
         train_batch_size=FLAGS.train_batch_size,
         config=run_config,
         params=params)
-    # train_estimator = tf.estimator.Estimator(
-    #     model_fn=retinanet_model.retinanet_model_fn,
-    #     # train_batch_size=FLAGS.train_batch_size,
-    #     config=run_config,
-    #     params=params)
     train_estimator.train(
         input_fn=dataloader.InputReader(FLAGS.training_file_pattern,
                                         is_training=True),
@@ -187,21 +168,13 @@ def main(argv):
           is_training_bn=False,
           use_bfloat16=False,
       )
-      # eval_estimator = tpu_estimator.TPUEstimator(
-      #     model_fn=retinanet_model.retinanet_model_fn,
-      #     use_tpu=False,
-      #     train_batch_size=FLAGS.train_batch_size,
-      #     eval_batch_size=1,
-      #     config=run_config,
-      #     params=eval_params)
-
-      eval_estimator = tf.estimator.Estimator(
+      eval_estimator = tpu_estimator.TPUEstimator(
           model_fn=retinanet_model.retinanet_model_fn,
-          # train_batch_size=FLAGS.train_batch_size,
-          # eval_batch_size=1,
+          use_tpu=False,
+          train_batch_size=FLAGS.train_batch_size,
+          eval_batch_size=1,
           config=run_config,
           params=eval_params)
-
       eval_results = eval_estimator.evaluate(
           input_fn=dataloader.InputReader(FLAGS.validation_file_pattern,
                                           is_training=False),
@@ -222,13 +195,7 @@ def main(argv):
         is_training_bn=False,
         use_bfloat16=False,
     )
-    # eval_estimator = tf.estimator.Estimator(
-    #     model_fn=retinanet_model.retinanet_model_fn,
-    #     # train_batch_size=FLAGS.train_batch_size,
-    #     # eval_batch_size=1,
-    #     config=run_config,
-    #     params=eval_params)
-    #
+
     eval_estimator = tpu_estimator.TPUEstimator(
         model_fn=retinanet_model.retinanet_model_fn,
         use_tpu=False,
@@ -255,7 +222,6 @@ def main(argv):
             input_fn=dataloader.InputReader(FLAGS.validation_file_pattern,
                                             is_training=False),
             steps=FLAGS.eval_steps)
-
         tf.logging.info('Eval results: %s' % eval_results)
 
         # Terminate eval job when final checkpoint is reached
