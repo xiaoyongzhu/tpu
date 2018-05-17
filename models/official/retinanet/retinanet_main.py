@@ -263,8 +263,7 @@ def main(argv):
 
       eval_results = eval_estimator.predict(
           input_fn=dataloader.InputReader(FLAGS.validation_file_pattern,
-                                          is_training=False),
-      checkpoint_path=FLAGS.model_dir)
+                                          is_training=False))
 
       for result in eval_results:
         print("eval result is", result)
