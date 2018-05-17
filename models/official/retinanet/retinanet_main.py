@@ -134,10 +134,12 @@ def main(argv):
     config_proto.graph_options.optimizer_options.global_jit_level = (
         tf.OptimizerOptions.ON_1)
 
+  distribution = tf.contrib.distribute.MirroredStrategy(num_gpus=2)
   run_config = tpu_config.RunConfig(
       cluster=tpu_cluster_resolver,
       evaluation_master=FLAGS.eval_master,
       model_dir=FLAGS.model_dir,
+      train_distribute=distribution,
       log_step_count_steps=FLAGS.iterations_per_loop,
       session_config=config_proto,
       tpu_config=tpu_config.TPUConfig(FLAGS.iterations_per_loop,

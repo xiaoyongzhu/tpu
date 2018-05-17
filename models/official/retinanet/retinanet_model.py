@@ -177,7 +177,7 @@ def _detection_loss(cls_outputs, box_outputs, labels, params):
   return total_loss, cls_loss, box_loss
 
 
-def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
+def _model_fn(dataset, mode, params, model, variable_filter_fn=None):
   """Model defination for the RetinaNet model based on ResNet.
 
   Args:
@@ -196,6 +196,24 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
   Returns:
     tpu_spec: the TPUEstimatorSpec to run training, evaluation, or prediction.
   """
+
+  batch_size = params['batch_size']
+  (features, cls_targets, box_targets, num_positives, source_ids,
+   image_scales) = dataset.make_one_shot_iterator().get_next()
+  labels = {}
+  # count num_positives in a batch
+  num_positives_batch = tf.reduce_mean(num_positives)
+  labels['mean_num_positives'] = tf.reshape(
+      tf.tile(tf.expand_dims(num_positives_batch, 0), [
+          batch_size,
+      ]), [batch_size, 1])
+
+  for level in range(params['min_level'], params['max_level'] + 1):
+      labels['cls_targets_%d' % level] = cls_targets[level]
+      labels['box_targets_%d' % level] = box_targets[level]
+  labels['source_ids'] = source_ids
+  labels['image_scales'] = image_scales
+
   def _model_outputs():
     return model(
         features,
@@ -327,11 +345,10 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
       scaffold_fn=scaffold_fn)
 
 
-def retinanet_model_fn(features, labels, mode, params):
+def retinanet_model_fn(dataset, mode, params):
   """RetinaNet model."""
   return _model_fn(
-      features,
-      labels,
+      dataset,
       mode,
       params,
       model=retinanet_architecture.retinanet,

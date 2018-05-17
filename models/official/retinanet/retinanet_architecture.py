@@ -53,7 +53,7 @@ def batch_norm_relu(inputs,
     name: the name of the batch normalization layer
 
   Returns:
-    A normalized `Tensor` with the same `data_format`.6
+    A normalized `Tensor` with the same `data_format`
   """
   if init_zero:
     gamma_initializer = tf.zeros_initializer()
