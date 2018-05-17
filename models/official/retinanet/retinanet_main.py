@@ -263,29 +263,29 @@ def main(argv):
 
       eval_results = eval_estimator.predict(
           input_fn=dataloader.InputReader(FLAGS.validation_file_pattern,
-                                          is_training=False))
+                                          is_training=False), yield_single_examples=False)
 
       for result in eval_results:
         for key in result:
           print(key)
-          import anchors
-          eval_anchors = anchors.Anchors(params['min_level'],
-                                         params['max_level'],
-                                         params['num_scales'],
-                                         params['aspect_ratios'],
-                                         params['anchor_scale'],
-                                         params['image_size'])
-          anchor_labeler = anchors.AnchorLabeler(eval_anchors,
-                                                 params['num_classes'])
-          cls_outputs = {}
-          box_outputs = {}
-          for level in range(params['min_level'], params['max_level'] + 1):
-              cls_outputs[level] = result['cls_outputs_%d' % level]
-              box_outputs[level] = result['box_outputs_%d' % level]
-
-          detections = anchor_labeler.generate_detections(
-              cls_outputs, box_outputs, image_id=100)
-          print("detection for image is", detections)
+          # import anchors
+          # eval_anchors = anchors.Anchors(params['min_level'],
+          #                                params['max_level'],
+          #                                params['num_scales'],
+          #                                params['aspect_ratios'],
+          #                                params['anchor_scale'],
+          #                                params['image_size'])
+          # anchor_labeler = anchors.AnchorLabeler(eval_anchors,
+          #                                        params['num_classes'])
+          # cls_outputs = {}
+          # box_outputs = {}
+          # for level in range(params['min_level'], params['max_level'] + 1):
+          #     cls_outputs[level] = result['cls_outputs_%d' % level]
+          #     box_outputs[level] = result['box_outputs_%d' % level]
+          #
+          # detections = anchor_labeler.generate_detections(
+          #     cls_outputs, box_outputs, image_id=100)
+          # print("detection for image is", detections)
   else:
     tf.logging.info('Mode not found.')
 
