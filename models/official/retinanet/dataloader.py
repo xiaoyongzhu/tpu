@@ -138,21 +138,22 @@ class InputReader(object):
         tf.contrib.data.batch_and_drop_remainder(batch_size))
     dataset = dataset.prefetch(1)
 
-    return dataset
 
-    # (images, cls_targets, box_targets, num_positives, source_ids,
-    #  image_scales) = dataset.make_one_shot_iterator().get_next()
-    # labels = {}
-    # # count num_positives in a batch
-    # num_positives_batch = tf.reduce_mean(num_positives)
-    # labels['mean_num_positives'] = tf.reshape(
-    #     tf.tile(tf.expand_dims(num_positives_batch, 0), [
-    #         batch_size,
-    #     ]), [batch_size, 1])
-    #
-    # for level in range(params['min_level'], params['max_level'] + 1):
-    #   labels['cls_targets_%d' % level] = cls_targets[level]
-    #   labels['box_targets_%d' % level] = box_targets[level]
-    # labels['source_ids'] = source_ids
-    # labels['image_scales'] = image_scales
+    (images, cls_targets, box_targets, num_positives, source_ids,
+     image_scales) = dataset.make_one_shot_iterator().get_next()
+    labels = {}
+    # count num_positives in a batch
+    num_positives_batch = tf.reduce_mean(num_positives)
+    labels['mean_num_positives'] = tf.reshape(
+        tf.tile(tf.expand_dims(num_positives_batch, 0), [
+            batch_size,
+        ]), [batch_size, 1])
+
+    for level in range(params['min_level'], params['max_level'] + 1):
+      labels['cls_targets_%d' % level] = cls_targets[level]
+      labels['box_targets_%d' % level] = box_targets[level]
+    labels['source_ids'] = source_ids
+    labels['image_scales'] = image_scales
+    from tensorflow.python.data.ops import dataset_ops
+    return dataset_ops.Dataset.zip((images, labels))
     # return images, labels
