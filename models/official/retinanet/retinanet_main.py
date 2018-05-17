@@ -256,7 +256,7 @@ def main(argv):
       eval_estimator = tpu_estimator.TPUEstimator(
           model_fn=retinanet_model.retinanet_model_fn,
           use_tpu=False,
-          eval_batch_size=1,
+          predict_batch_size=1,
           train_batch_size=FLAGS.train_batch_size,
           config=run_config,
           params=eval_params)
