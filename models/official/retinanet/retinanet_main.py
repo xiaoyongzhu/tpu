@@ -268,9 +268,7 @@ def main(argv):
 
       for result in eval_results:
         # format: image_id, x, y, width, height, score, class]
-        if result['detections'][5] > 0.5:
-            # only print out confidence > 0.5
-            print(result['detections'])
+        print(result['detections'])
 
 
   else:

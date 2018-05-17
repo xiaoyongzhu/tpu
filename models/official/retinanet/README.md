@@ -3,12 +3,20 @@
 This repository is a fork of the TensorFlow TPU repository (https://github.com/tensorflow/tpu) and the goal is to reuse the RetinaNet model with TensorFlow Object Detection API. Please go directly to the [RetinaNet folder](models/official/retinanet) for more details on what I have modified. The most important change is to change TPU Estimator to TensorFlow regular estimator.
 
 
-Command:
+## Training Command:
+Most importantly, set `--use_tpu` to `False`, and GPU will be automatically used (though the logs say it will use CPU) 
 
 ```
-python models/official/retinanet/retinanet_main.py   --train_batch_size=8  --training_file_pattern=/mnt/batch/tasks/shared/LS_root/mounts/bfs_train/xiaoyzhu/train-*  --resnet_checkpoint=/mnt/batch/tasks/shared/LS_root/mounts/bfs_train/resnet-nhwc-2018-02-07/  --model_dir=/home/ai4e/retinanet_train  --hparams=image_size=640  --num_examples_per_epoch=6400  --num_epochs=1
+python models/official/retinanet/retinanet_main.py   --train_batch_size=4  --training_file_pattern=/data/coco/coco_train_tfrecord/train* --validation_file_pattern=/data/coco/coco_val_tfrecord/val-*  --val_json_file=/data/coco/instances_val2017.json --resnet_checkpoint=/mnt/resnet-nhwc-2018-02-07/  --model_dir=/mnt/retinanet_train  --hparams=image_size=640  --use_tpu=False  --mode=train     --num_epochs=73500    --eval_steps=10 --num_examples_per_epoch=2000 --eval_after_training=True --gcp_project=''
 ```
 
+
+
+## Prediction
+I've also added the prediction part so the models could be used for inferencing.
+```
+python models/official/retinanet/retinanet_main.py   --train_batch_size=4  --training_file_pattern=/data/coco/coco_train_tfrecord/train* --validation_file_pattern=/data/coco/coco_val_tfrecord/val-*  --val_json_file=/data/coco/instances_val2017.json --resnet_checkpoint=/mnt/resnet-nhwc-2018-02-07/  --model_dir=/mnt/retinanet_train  --hparams=image_size=640  --use_tpu=False  --mode=pred     --num_epochs=73500    --eval_steps=10 --num_examples_per_epoch=12000 --eval_after_training=True --gcp_project=''
+```
 
 ## Using pre-trained feature extractor (ResNet)
 I have also included the weights to initialize the backbone architecture (ResNet) since in the original repo, it is only available in Google Cloud Storage. This makes the repository a bit big.Please note that the folder must contain a `checkpoint` file and its content should point to the ResNet model file path. Otherwise the weights won't get loaded.
