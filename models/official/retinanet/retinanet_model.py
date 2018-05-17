@@ -238,7 +238,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
     detections = anchor_labeler.generate_detections(
         cls_outputs, box_outputs,image_id=100)
     print("detection for image is", detections)
-    predictions['detections'] = detections
+    # predictions['detections'] = detections
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 
   # Load pretrained model from checkpoint.
