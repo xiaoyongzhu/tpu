@@ -266,7 +266,8 @@ def main(argv):
                                           is_training=False))
 
       for result in eval_results:
-        print("eval result is", result)
+        for key, value in result.iteritems():
+          print(key)
   else:
     tf.logging.info('Mode not found.')
 

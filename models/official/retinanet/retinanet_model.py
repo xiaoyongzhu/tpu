@@ -219,7 +219,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
 
   # First check if it is in PREDICT mode.
   if mode == tf.estimator.ModeKeys.PREDICT:
-    print("entering PREDICT mode")
+    # print("entering PREDICT mode")
     predictions = {
         'image': features,
     }
@@ -237,7 +237,7 @@ def _model_fn(features, labels, mode, params, model, variable_filter_fn=None):
                                            params['num_classes'])
     detections = anchor_labeler.generate_detections(
         cls_outputs, box_outputs,image_id=100)
-    print("detection for image is", detections)
+    # print("detection for image is", detections)
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 
   # Load pretrained model from checkpoint.
